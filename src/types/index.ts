@@ -35,7 +35,7 @@ export interface Order {
   _id: string;
   customer_id: string;
   items: CartItem[];
-  total_price: number;
+  total_price: number | { $numberDecimal: string } | any;
   status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   payment_status: 'pending' | 'paid' | 'failed';
   created_at: string;

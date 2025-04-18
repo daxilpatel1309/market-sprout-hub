@@ -14,6 +14,7 @@ const Orders = () => {
     const fetchOrders = async () => {
       try {
         const data = await orderAPI.getOrders();
+        console.log("Orders data:", data); // Debug log
         setOrders(data);
       } catch (error) {
         console.error('Error fetching orders:', error);
@@ -25,6 +26,21 @@ const Orders = () => {
 
     fetchOrders();
   }, []);
+
+  // Helper function to safely format price values
+  const formatPrice = (price: any): string => {
+    if (typeof price === 'number') {
+      return price.toFixed(2);
+    }
+    
+    // Handle MongoDB decimal128 format
+    if (price && typeof price === 'object' && '$numberDecimal' in price) {
+      return parseFloat(price.$numberDecimal).toFixed(2);
+    }
+    
+    // Return 0 as fallback
+    return '0.00';
+  };
 
   if (isLoading) {
     return (
@@ -64,7 +80,7 @@ const Orders = () => {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium">${order.total_price.toFixed(2)}</p>
+                        <p className="font-medium">${formatPrice(order.total_price)}</p>
                         <p className="text-sm capitalize text-muted-foreground">
                           Status: {order.status}
                         </p>

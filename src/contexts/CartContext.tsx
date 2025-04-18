@@ -46,9 +46,28 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [isAuthenticated]);
 
   const addToCart = async (productId: string) => {
+    if (!isAuthenticated) {
+      toast.error("Please login to add items to cart");
+      return;
+    }
+    
     try {
       setIsLoading(true);
-      await cartAPI.addToCart(productId);
+      
+      const response = await fetch(`http://localhost:8085/cart/${productId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error response from server:", errorText);
+        throw new Error(`Failed to add to cart: ${response.status} ${response.statusText}`);
+      }
+      
       await fetchCart();
       toast.success('Product added to cart');
     } catch (error) {

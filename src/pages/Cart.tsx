@@ -22,6 +22,21 @@ const Cart = () => {
     }
   };
 
+  // Helper function to safely format price values
+  const formatPrice = (price: any): string => {
+    if (typeof price === 'number') {
+      return price.toFixed(2);
+    }
+    
+    // Handle MongoDB decimal128 format
+    if (price && typeof price === 'object' && '$numberDecimal' in price) {
+      return parseFloat(price.$numberDecimal).toFixed(2);
+    }
+    
+    // Return 0 as fallback
+    return '0.00';
+  };
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
