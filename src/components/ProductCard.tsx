@@ -23,6 +23,21 @@ const ProductCard = ({ product, inWishlist = false, onWishlistUpdate }: ProductC
   const [isInWishlist, setIsInWishlist] = useState(inWishlist);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
   
+  // Format price safely
+  const formatPrice = (price: any): string => {
+    // If price is already a number, format it
+    if (typeof price === 'number') {
+      return price.toFixed(2);
+    }
+    // If price is a string that can be converted to a number
+    if (typeof price === 'string' && !isNaN(parseFloat(price))) {
+      return parseFloat(price).toFixed(2);
+    }
+    // Default value if price is invalid
+    console.warn(`Invalid price format for product ${product._id}: ${price}`);
+    return '0.00';
+  };
+  
   const handleAddToCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -118,7 +133,7 @@ const ProductCard = ({ product, inWishlist = false, onWishlistUpdate }: ProductC
           
           <h3 className="mt-2 font-medium line-clamp-1">{product.name}</h3>
           
-          <div className="mt-1 font-semibold">${product.price.toFixed(2)}</div>
+          <div className="mt-1 font-semibold">${formatPrice(product.price)}</div>
         </CardContent>
         
         <CardFooter className="p-4 pt-0">

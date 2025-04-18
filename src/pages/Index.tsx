@@ -4,6 +4,7 @@ import { productAPI } from '../services/api';
 import { Product } from '../types';
 import Navbar from '../components/Navbar';
 import ProductGrid from '../components/ProductGrid';
+import { toast } from 'sonner';
 
 const Index = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -14,9 +15,19 @@ const Index = () => {
     const fetchProducts = async () => {
       try {
         const data = await productAPI.getProducts();
-        setProducts(data.filter(product => product.status === 'approved'));
+        console.log("Fetched products:", data);
+        // Make sure we're working with an array of products
+        if (Array.isArray(data)) {
+          setProducts(data.filter(product => product && product.status === 'approved'));
+        } else {
+          console.error("Unexpected product data format:", data);
+          setProducts([]);
+          toast.error("Error retrieving products");
+        }
       } catch (error) {
         console.error('Error fetching products:', error);
+        setProducts([]);
+        toast.error("Error retrieving products");
       } finally {
         setIsLoading(false);
       }
