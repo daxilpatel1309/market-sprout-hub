@@ -25,14 +25,23 @@ const ProductCard = ({ product, inWishlist = false, onWishlistUpdate }: ProductC
   
   // Format price safely
   const formatPrice = (price: any): string => {
+    if (!price) return '0.00';
+    
+    // If price is an object with $numberDecimal (MongoDB format)
+    if (typeof price === 'object' && price.$numberDecimal) {
+      return parseFloat(price.$numberDecimal).toFixed(2);
+    }
+    
     // If price is already a number, format it
     if (typeof price === 'number') {
       return price.toFixed(2);
     }
+    
     // If price is a string that can be converted to a number
     if (typeof price === 'string' && !isNaN(parseFloat(price))) {
       return parseFloat(price).toFixed(2);
     }
+    
     // Default value if price is invalid
     console.warn(`Invalid price format for product ${product._id}: ${price}`);
     return '0.00';

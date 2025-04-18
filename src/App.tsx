@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +15,8 @@ import Profile from "./pages/Profile";
 import Orders from "./pages/Orders";
 import Cart from "./pages/Cart";
 import Wishlist from "./pages/Wishlist";
+import SellerDashboard from "./pages/seller/SellerDashboard";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,12 +51,12 @@ const App = () => (
               
               {/* Protected Seller Routes */}
               <Route element={<ProtectedRoute allowedRoles={["seller"]} />}>
-                {/* Seller routes will be added here */}
+                <Route path="/seller/dashboard" element={<SellerDashboard />} />
               </Route>
               
               {/* Protected Admin Routes */}
               <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
-                {/* Admin routes will be added here */}
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
               </Route>
               
               {/* Catch-all route */}

@@ -13,10 +13,11 @@ const Wishlist = () => {
   const fetchWishlist = async () => {
     try {
       const data = await wishlistAPI.getWishlist();
-      setWishlistItems(data);
+      setWishlistItems(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching wishlist:', error);
       toast.error('Failed to load wishlist');
+      setWishlistItems([]);
     } finally {
       setIsLoading(false);
     }
@@ -44,7 +45,7 @@ const Wishlist = () => {
           <h1 className="text-2xl font-bold">My Wishlist</h1>
         </div>
 
-        {wishlistItems.length === 0 ? (
+        {!wishlistItems || wishlistItems.length === 0 ? (
           <div className="text-center text-muted-foreground">
             Your wishlist is empty.
           </div>

@@ -28,9 +28,10 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setIsLoading(true);
       const cartItems = await cartAPI.getCart();
-      setCart(cartItems);
+      setCart(Array.isArray(cartItems) ? cartItems : []);
     } catch (error) {
       console.error('Error fetching cart:', error);
+      setCart([]);
     } finally {
       setIsLoading(false);
     }
@@ -52,6 +53,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast.success('Product added to cart');
     } catch (error) {
       console.error('Error adding to cart:', error);
+      toast.error('Failed to add product to cart');
     } finally {
       setIsLoading(false);
     }
@@ -65,13 +67,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast.success('Product removed from cart');
     } catch (error) {
       console.error('Error removing from cart:', error);
+      toast.error('Failed to remove product from cart');
     } finally {
       setIsLoading(false);
     }
   };
 
   const getCartTotal = (): number => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.reduce((total, item) => {
+      const price = typeof item.price === 'number' ? item.price : 0;
+      return total + (price * item.quantity);
+    }, 0);
   };
 
   const getCartCount = (): number => {
