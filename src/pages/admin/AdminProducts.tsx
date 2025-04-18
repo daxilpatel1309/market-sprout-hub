@@ -43,6 +43,19 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, refreshData }) 
     }
   };
 
+  const formatPrice = (price: any): string => {
+    if (typeof price === 'number') {
+      return price.toFixed(2);
+    } 
+    
+    // Handle MongoDB decimal128 format or other object formats
+    if (price && typeof price === 'object' && '$numberDecimal' in price) {
+      return parseFloat(price.$numberDecimal).toFixed(2);
+    }
+    
+    return '0.00';
+  };
+
   const pendingProducts = products.filter(p => p.status === 'pending');
   const approvedProducts = products.filter(p => p.status === 'approved');
   const rejectedProducts = products.filter(p => p.status === 'rejected');
@@ -83,15 +96,12 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, refreshData }) 
                 </div>
               </td>
               <td className="p-2">
-                {typeof product.seller_id === 'object' && product.seller_id.email ? 
-                  product.seller_id.email : 'Unknown'}
+                {product.seller_id && typeof product.seller_id === 'object' && 'email' in product.seller_id 
+                  ? product.seller_id.email 
+                  : 'Unknown'}
               </td>
               <td className="p-2">
-                ${typeof product.price === 'number' 
-                  ? product.price.toFixed(2) 
-                  : product.price.$numberDecimal 
-                    ? parseFloat(product.price.$numberDecimal).toFixed(2)
-                    : '0.00'}
+                ${formatPrice(product.price)}
               </td>
               <td className="p-2">{getStatusBadge(product.status)}</td>
               <td className="p-2">

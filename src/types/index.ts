@@ -14,9 +14,9 @@ export interface Product {
   _id: string;
   name: string;
   description: string;
-  price: number;
+  price: number | { $numberDecimal: string } | any;
   stock: number;
-  seller_id: string;
+  seller_id: string | { email: string; [key: string]: any } | null;
   category_id: string;
   images: string[];
   rating_avg: number;

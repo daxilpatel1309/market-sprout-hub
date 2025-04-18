@@ -72,6 +72,19 @@ const SellerProducts: React.FC<SellerProductsProps> = ({ products, refreshData }
     }
   };
 
+  const formatPrice = (price: any): string => {
+    if (typeof price === 'number') {
+      return price.toFixed(2);
+    } 
+    
+    // Handle MongoDB decimal128 format or other object formats
+    if (price && typeof price === 'object' && '$numberDecimal' in price) {
+      return parseFloat(price.$numberDecimal).toFixed(2);
+    }
+    
+    return '0.00';
+  };
+
   return (
     <>
       <Card>
@@ -120,11 +133,7 @@ const SellerProducts: React.FC<SellerProductsProps> = ({ products, refreshData }
                         </div>
                       </td>
                       <td className="p-2">
-                        ${typeof product.price === 'number' 
-                          ? product.price.toFixed(2) 
-                          : product.price.$numberDecimal 
-                            ? parseFloat(product.price.$numberDecimal).toFixed(2)
-                            : '0.00'}
+                        ${formatPrice(product.price)}
                       </td>
                       <td className="p-2">{product.stock}</td>
                       <td className="p-2">{getStatusBadge(product.status)}</td>
