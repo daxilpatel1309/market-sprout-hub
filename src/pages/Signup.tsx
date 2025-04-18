@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Loader2 } from 'lucide-react';
+import { User } from '../types';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -18,8 +19,8 @@ const Signup = () => {
     password: '',
     confirmPassword: '',
     dob: '',
-    gender: 'male',
-    role: 'customer',
+    gender: 'male' as 'male' | 'female' | 'other', // Fix: Type assertion to match User interface
+    role: 'customer' as 'customer' | 'seller' | 'admin', // Fix: Type assertion to match User interface
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { signup, isLoading } = useAuth();
@@ -30,7 +31,21 @@ const Signup = () => {
   };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === 'gender') {
+      // Ensure the value is one of the allowed gender types
+      setFormData((prev) => ({ 
+        ...prev, 
+        [name]: value as 'male' | 'female' | 'other' 
+      }));
+    } else if (name === 'role') {
+      // Ensure the value is one of the allowed role types
+      setFormData((prev) => ({ 
+        ...prev, 
+        [name]: value as 'customer' | 'seller' | 'admin' 
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const validate = () => {
@@ -81,6 +96,7 @@ const Signup = () => {
     if (validate()) {
       try {
         const { confirmPassword, ...userData } = formData;
+        // The userData object will now have the correct types for gender and role
         await signup(userData);
       } catch (error) {
         console.error('Signup error:', error);
