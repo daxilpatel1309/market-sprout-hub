@@ -37,7 +37,10 @@ const App = () => (
               
               {/* Protected Customer Routes */}
               <Route element={<ProtectedRoute allowedRoles={["customer"]} />}>
-                {/* Customer routes will be added here */}
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/orders" element={<Orders />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/wishlist" element={<Wishlist />} />
               </Route>
               
               {/* Protected Seller Routes */}
